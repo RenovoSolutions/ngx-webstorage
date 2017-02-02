@@ -1,0 +1,30 @@
+{
+  "name": "ngx-webstorage",
+  "version": "0.0.1",
+  "description": "A service that does stuff browser storage resources",
+  "main": "angular2-library-example.js",
+  "scripts": {
+    "watch": "tsc -p src -w",
+    "build": "tsc -p src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jbeck8176/ngx-webstorage.git"
+  },
+  "keywords": ["web storage", "local storage", "session storage"],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "~2.1.0"
+  },
+  "dependencies": {
+    "@angular/common": "~2.4.0",
+    "@angular/compiler": "~2.4.0",
+    "@angular/core": "~2.4.0",
+    "@angular/http": "~2.4.0",
+    "@angular/platform-browser": "~2.4.0",
+    "@angular/platform-browser-dynamic": "~2.4.0",
+    "moment": "^2.17.1",
+    "rxjs": "^5.1.0",
+    "zone.js": "~0.7.2"
+  }
+}
