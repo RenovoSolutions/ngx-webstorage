@@ -1,8 +1,8 @@
 {
   "name": "ngx-webstorage",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "description": "A service that does stuff browser storage resources",
-  "main": "angular2-library-example.js",
+  "main": "index.js",
   "scripts": {
     "watch": "tsc -p src -w",
     "build": "tsc -p src"
