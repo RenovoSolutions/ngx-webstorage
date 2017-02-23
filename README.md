@@ -31,6 +31,15 @@ import { WebStorageModule } from 'ngx-webstorage';
 export class AppModule {}
 ```
 
+If you are using systemjs you will need to add a map to your system.config.js file:
+```typescript
+    var map = {
+	...
+	'ngx-webstorage': 'node_modules/ngx-webstorage/index.js',
+    ...
+};
+```
+
 Then you can use it in a component:
 
 ```typescript
