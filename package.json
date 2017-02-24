@@ -5,16 +5,23 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -p src -w",
-    "build": "tsc -p src"
+    "build": "tsc -p src",
+    "test": "tsc -p src && mocha ./lib/test/*.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jbeck8176/ngx-webstorage.git"
   },
-  "keywords": ["web storage", "local storage", "session storage"],
+  "keywords": [
+    "web storage",
+    "local storage",
+    "session storage"
+  ],
   "license": "MIT",
   "devDependencies": {
-    "typescript": "~2.1.0"
+    "typescript": "~2.1.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   },
   "dependencies": {
     "@angular/common": "~2.4.0",
