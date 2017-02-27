@@ -1,6 +1,6 @@
 {
   "name": "ngx-webstorage",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A service that does stuff browser storage resources",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
