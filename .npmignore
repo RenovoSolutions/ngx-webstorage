@@ -1,3 +1,20 @@
-examples
-node_modules
-src
+# NPM
+/node_modules/
+npm-debug.log
+
+# Git
+*.orig
+
+# Ignore configuration
+/config/
+tsconfig.json
+tsconfig.dist.json
+
+# Demo app files
+/app/
+
+# Ignore application files
+/lib/
+/config/
+/.vscode/
+/typings/

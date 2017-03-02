@@ -1,40 +1,62 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable} from '@angular/core';
 
 import { IWebStorageServiceConfig } from './webstorage.config.interface';
 import { IWebStorageServicePayload } from './webstorage.payload.interface';
 
-const DEPRECATED: string = 'This function is deprecated.';
-const WEB_STORAGE_NOT_SUPPORTED: string = 'WEB_STORAGE_NOT_SUPPORTED';
+export const DEPRECATED: string = 'This function is deprecated.';
+export const WEB_STORAGE_NOT_SUPPORTED: string = 'WEB_STORAGE_NOT_SUPPORTED';
 
 @Injectable()
 export class WebStorageService {
-	isSupported: boolean = false;
+	private _isSupported: boolean = false;
+	get isSupported(): boolean {
+		return this._isSupported;
+	}
 
-	private prefix: string;
-	private storageType: 'sessionStorage' | 'localStorage';
+	private _prefix: string;
+	get prefix(): string {
+		return this._prefix;
+	}
+
+	private _storageType: 'sessionStorage' | 'localStorage';
+	get storageType(): string {
+		return this._storageType;
+	}
+
 	private webStorage: Storage;
 
 	constructor(
-		@Inject('WEB_STORAGE_SERVICE_CONFIG') config: IWebStorageServiceConfig
+		@Inject('WEB_STORAGE_SERVICE_CONFIG') config: IWebStorageServiceConfig,
 	) {
-		let { prefix, storageType } = config;
+		if (config.mockWebStorage)
+		{
+			this.webStorage = config.mockWebStorage;
+		}
 
-		this.prefix = prefix || 'ls';
-		this.storageType = storageType || 'localStorage';
-		this.isSupported = this.checkSupport();
+		let { prefix, storageType } = config;
+		this._prefix = prefix || 'ls';
+		this._storageType = storageType || 'localStorage';
+
+		this._isSupported = this.checkSupport();
 	}
 
-	public deriveKey(key: string, user?:string): string {
+	reInit() {
+		this._isSupported = this.checkSupport();
+	}
+
+	deriveKey(key: string, user?:string): string {
 		return user ? `${this.prefix}.${user}.${key}` : `${this.prefix}.${key}`;
 	}
 
-	public get(key: string, user?:string): IWebStorageServicePayload {
+	get(key: string, user?: string): IWebStorageServicePayload {
+
 		if (!this.isSupported) {
-			console.log('webStorageError', WEB_STORAGE_NOT_SUPPORTED);
+			console.warn('webStorageError', WEB_STORAGE_NOT_SUPPORTED);
 			return null;
 		}
 
 		let item = this.webStorage ? this.webStorage.getItem(this.deriveKey(key, user)) : null;
+
 		// FIXME: not a perfect solution, since a valid 'null' string can't be stored
 		if (!item || item === 'null') {
 			return null;
@@ -47,17 +69,42 @@ export class WebStorageService {
 		}
 	}
 
-	public getStorageType(): string {
+	getStorageType(): string {
 		return this.storageType;
 	}
 
-	public remove(user?:string,...keys: Array<string>): boolean {
-		let result = true;
-		keys.forEach((key: string) => {
-			if (!this.isSupported) {
-				console.log('webStorageError', WEB_STORAGE_NOT_SUPPORTED);
-				result = false;
+	set(payload:IWebStorageServicePayload): boolean {
+		if (payload === undefined) {
+			return false;
+		}
+
+		let jsonPayload: string = JSON.stringify(payload);
+
+		if (!this.isSupported) {
+			console.warn('webStorageError', WEB_STORAGE_NOT_SUPPORTED);
+			return false;
+		}
+
+		try {
+			if (this.webStorage) {
+				this.webStorage.setItem(this.deriveKey(payload.key, payload.user), jsonPayload);
 			}
+		} catch (e) {
+			console.error('webStorageError', e.message);
+			return false;
+		}
+		return true;
+	}
+
+	remove(user?:string,...keys: Array<string>): boolean {
+		let result = true;
+
+		if (!this.isSupported) {
+			console.warn('webStorageError', WEB_STORAGE_NOT_SUPPORTED);
+			result = false;
+		}
+		keys.forEach((key: string) => {
+
 
 			try {
 				this.webStorage.removeItem(this.deriveKey(key, user));
@@ -69,33 +116,12 @@ export class WebStorageService {
 		return result;
 	}
 
-	public set(payload:IWebStorageServicePayload): boolean {
-		if (payload === undefined) {
-			return false;
-		}
-
-		let jsonPayload: string = JSON.stringify(payload);
-
-		if (!this.isSupported) {
-			console.log('webStorageError', WEB_STORAGE_NOT_SUPPORTED);
-			return false;
-		}
-
-		try {
-			if (this.webStorage) {
-				this.webStorage.setItem(this.deriveKey(payload.key, payload.user), jsonPayload);
-			}
-		} catch (e) {
-			console.log('webStorageError', e.message);
-			return false;
-		}
-		return true;
-	}
-
-	private checkSupport(): boolean {
+	checkSupport(): boolean {
 		try {
 			let supported = this.storageType in window
 				&& window[this.storageType] !== null;
+
+			console.log('supported', supported);
 
 			if (supported) {
 				this.webStorage = window[this.storageType];

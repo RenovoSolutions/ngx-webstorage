@@ -1,0 +1,8 @@
+<div>
+	Current Value: {{currentWebStorageValue | json}}
+</div>
+
+<div>
+	Set a value: <input #setValInput type="text"><br><br>
+    <button (click)="setStorage(setValInput.value); setValInput.value = '';">SAVE</button>
+</div>
