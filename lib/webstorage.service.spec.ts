@@ -86,16 +86,15 @@ describe('WebStorageService', () => {
 			};
 
 			getItemSpy = sinon.spy(() => JSON.stringify(fakeItem));
-			mockBrowserStorage = <any>{ getItem: <any>getItemSpy, mockBrowserStorage: mockBrowserStorage };
+			mockBrowserStorage = <any>{ getItem: <any>getItemSpy};
 			webStorageService = new WebStorageService({ ...defaultConfig, mockWebStorage: mockBrowserStorage });
-		});
 
-		it('should check if web storage is supported by the browser', () => {
 			const isSupported: boolean = true;
 			let mockCheckSupport = sinon.spy(() => isSupported);
 			webStorageService.checkSupport = mockCheckSupport
+		});
 
-			webStorageService.reInit();
+		it('should check if web storage is supported by the browser', () => {
 
 			webStorageService.get('dontCare');
 
@@ -116,22 +115,12 @@ describe('WebStorageService', () => {
 		});
 
 		it('should make call to getItem to retreive data from web storage', () => {
-			const isSupported: boolean = true;
-			let mockCheckSupport = sinon.spy(() => isSupported);
-			webStorageService.checkSupport = mockCheckSupport
-
-			webStorageService.reInit();
-
 			webStorageService.get('dontCare');
 
 			sinon.assert.calledOnce(getItemSpy);
 		});
 
 		it('should parse json string to real object', () => {
-			const isSupported: boolean = true;
-			let mockCheckSupport = sinon.spy(() => isSupported);
-			webStorageService.checkSupport = mockCheckSupport
-
 			webStorageService.reInit();
 
 			let result = webStorageService.get('dontCare');
@@ -155,8 +144,12 @@ describe('WebStorageService', () => {
 			};
 
 			setItemSpy = sinon.spy();
-			mockBrowserStorage = <any>{ setItem: <any>setItemSpy, mockBrowserStorage: mockBrowserStorage };
+			mockBrowserStorage = <any>{ setItem: <any>setItemSpy };
 			webStorageService = new WebStorageService({ ...defaultConfig, mockWebStorage: mockBrowserStorage });
+
+			const isSupported: boolean = true;
+			let mockCheckSupport = sinon.spy(() => isSupported);
+			webStorageService.checkSupport = mockCheckSupport
 		});
 
 		it('should throw warning when webstorage not supported', () => {
@@ -175,12 +168,6 @@ describe('WebStorageService', () => {
 		});
 
 		it('should call setItem from ', () => {
-			const isSupported: boolean = true;
-			let mockCheckSupport = sinon.spy(() => isSupported);
-			webStorageService.checkSupport = mockCheckSupport
-
-			webStorageService.reInit();
-
 			let payload: IWebStorageServicePayload = { key: 'key', user: 'user', value: {}, timestamp: moment() };
 
 			webStorageService.set(payload);
@@ -190,11 +177,6 @@ describe('WebStorageService', () => {
 
 		it('should serialize the payload', () => {
 			const fakeData = { id: 234, thing: 'thing' };
-			const isSupported: boolean = true;
-			let mockCheckSupport = sinon.spy(() => isSupported);
-			webStorageService.checkSupport = mockCheckSupport
-
-			webStorageService.reInit();
 
 			let payload: IWebStorageServicePayload = { key: 'key', user: 'user', value: fakeData, timestamp: moment() };
 
@@ -221,6 +203,10 @@ describe('WebStorageService', () => {
 			removeItemSpy = sinon.spy();
 			mockBrowserStorage = <any>{ removeItem: <any>removeItemSpy, mockBrowserStorage: mockBrowserStorage };
 			webStorageService = new WebStorageService({ ...defaultConfig, mockWebStorage: mockBrowserStorage });
+
+			const isSupported: boolean = true;
+			let mockCheckSupport = sinon.spy(() => isSupported);
+			webStorageService.checkSupport = mockCheckSupport
 		});
 
 		it('throw warning if not supported', () => {
@@ -237,11 +223,6 @@ describe('WebStorageService', () => {
 		});
 
 		it('should call remove ite for each key passed', () => {
-			const isSupported: boolean = true;
-			let mockCheckSupport = sinon.spy(() => isSupported);
-			webStorageService.checkSupport = mockCheckSupport
-
-			webStorageService.reInit();
 
 			let keys: string[] = ['key1', 'key2', 'key3'];
 			let user: string = 'user';

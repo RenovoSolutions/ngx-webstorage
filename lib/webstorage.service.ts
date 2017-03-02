@@ -28,8 +28,7 @@ export class WebStorageService {
 	constructor(
 		@Inject('WEB_STORAGE_SERVICE_CONFIG') config: IWebStorageServiceConfig,
 	) {
-		if (config.mockWebStorage)
-		{
+		if (config.mockWebStorage) {
 			this.webStorage = config.mockWebStorage;
 		}
 
@@ -109,7 +108,7 @@ export class WebStorageService {
 			try {
 				this.webStorage.removeItem(this.deriveKey(key, user));
 			} catch (e) {
-				console.log('webStorageError', e.message);
+				console.error('webStorageError', e.message);
 				result = false;
 			}
 		});
@@ -121,25 +120,25 @@ export class WebStorageService {
 			let supported = this.storageType in window
 				&& window[this.storageType] !== null;
 
-			console.log('supported', supported);
-
 			if (supported) {
-				this.webStorage = window[this.storageType];
+				if (!this.webStorage) {
+					this.webStorage = window[this.storageType];
 
-				// When Safari (OS X or iOS) is in private browsing mode, it
-				// appears as though localStorage is available, but trying to
-				// call .setItem throws an exception.
-				//
-				// "QUOTA_EXCEEDED_ERR: DOM Exception 22: An attempt was made
-				// to add something to storage that exceeded the quota."
-				let key = this.deriveKey(`__${Math.round(Math.random() * 1e7)}`);
-				this.webStorage.setItem(key, '');
-				this.webStorage.removeItem(key);
+					// When Safari (OS X or iOS) is in private browsing mode, it
+					// appears as though localStorage is available, but trying to
+					// call .setItem throws an exception.
+					//
+					// "QUOTA_EXCEEDED_ERR: DOM Exception 22: An attempt was made
+					// to add something to storage that exceeded the quota."
+					let key = this.deriveKey(`__${Math.round(Math.random() * 1e7)}`);
+					this.webStorage.setItem(key, '');
+					this.webStorage.removeItem(key);
+				}
 			}
 
 			return supported;
 		} catch (e) {
-			console.log('webStorageError', e.message);
+			console.error('webStorageError', e.message);
 			return false;
 		}
 	}
